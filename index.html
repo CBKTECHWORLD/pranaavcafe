@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pranaav Cafe – Fast Food Kiosk</title>
+<title>Pranaav Cafe – Indian Street Food</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
 /* ===================== RESET & VARIABLES ===================== */
@@ -684,7 +684,7 @@ footer {
     </div>
     <div>
       <div class="logo-text">Pranaav Cafe</div>
-      <div class="logo-sub">Fast Food Kiosk</div>
+      <div class="logo-sub">Indian Street Food</div>
     </div>
   </div>
   <ul class="nav-links">
@@ -693,7 +693,7 @@ footer {
     <li><a href="#reviews">Reviews</a></li>
     <li><a href="#feedback">Contact</a></li>
   </ul>
-  <a href="#menu" class="nav-cta">Order Now 🔥</a>
+  <a href="#menu" class="nav-cta">Taste Now 🔥</a>
 </nav>
 
 <!-- ===================== HERO ===================== -->
@@ -722,7 +722,7 @@ footer {
       </div>
       <div class="hero-stats">
         <div class="stat-item">
-          <div class="stat-num">6+</div>
+          <div class="stat-num">10+</div>
           <div class="stat-label">Food Items</div>
         </div>
         <div class="stat-item">
@@ -737,7 +737,7 @@ footer {
     </div>
 
     <div class="hero-visual">
-      <div class="card-badge">🔥 Today's Special</div>
+      <div class="card-badge">🔥 Our Special</div>
       <div class="hero-3d-card">
         <div class="food-showcase" id="heroShowcase">
           <div class="food-item-mini"><span class="food-emoji">💧</span><div class="food-name-mini">Golgappa</div></div>
@@ -1030,17 +1030,16 @@ footer {
             <div class="contact-icon">⏰</div>
             <div>
               <h4>Hours</h4>
-              <p>Mon – Sun: 10:00 AM – 10:00 PM</p>
+              <p>Mon – Sun: 11:00 AM – 09:00 PM</p>
             </div>
           </div>
-          <div class="contact-item">
+          <!-- <div class="contact-item">
             <div class="contact-icon">📞</div>
             <div>
               <h4>Call / WhatsApp</h4>
-              <!-- Update your phone number below -->
-              <p>+91 XXXXX XXXXX</p>
+                <p>+91 XXXXX XXXXX</p>
             </div>
-          </div>
+          </div> -->
           <div class="contact-item">
             <div class="contact-icon">📧</div>
             <div>
@@ -1156,7 +1155,7 @@ footer {
     </div>
   </div>
   <div class="footer-bottom">
-    <span>© 2024 Pranaav Cafe. All rights reserved.</span>
+    <span>© 2026 Pranaav Cafe. All rights reserved.</span>
     <span>Made with ❤️ for food lovers</span>
   </div>
 </footer>
@@ -1244,32 +1243,7 @@ function filterMenu(cat) {
   });
 }
 
-/* ---- Feedback Form → Google Sheets ---- */
-/*
-  HOW TO CONNECT TO GOOGLE SHEETS:
-  1. Create a Google Sheet with these columns:
-     Timestamp | Name | Phone | Email | Item | Rating | Message
-  2. In the Sheet, go to Extensions → Apps Script
-  3. Paste this script:
-     -------------------------
-     function doPost(e) {
-       var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-       var data = JSON.parse(e.postData.contents);
-       sheet.appendRow([
-         new Date(),
-         data.name, data.phone, data.email,
-         data.item, data.rating, data.message
-       ]);
-       return ContentService.createTextOutput(JSON.stringify({status:'OK'}))
-         .setMimeType(ContentService.MimeType.JSON);
-     }
-     -------------------------
-  4. Click Deploy → New Deployment → Web App
-     - Execute as: Me
-     - Who has access: Anyone
-  5. Copy the Web App URL and paste it in SHEETS_URL below.
-*/
-const SHEETS_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyUEqmwVlTHcVWs6f1Z05t9dlCkWyI2s6FLZk0A1wRJZ5zZ9_9IE5sNFa9D1toGcEkw/exec';
 
 async function submitFeedback(e) {
   e.preventDefault();
@@ -1292,7 +1266,7 @@ async function submitFeedback(e) {
   status.textContent = 'Submitting your feedback…';
 
   // Check if URL is configured
-  if (SHEETS_URL === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE') {
+  if (SHEETS_URL === 'https://script.google.com/macros/s/AKfycbyUEqmwVlTHcVWs6f1Z05t9dlCkWyI2s6FLZk0A1wRJZ5zZ9_9IE5sNFa9D1toGcEkw/exec') {
     // Demo mode — simulate success
     await new Promise(r => setTimeout(r, 1200));
     showSuccessState();
