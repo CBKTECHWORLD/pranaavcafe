@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pranaav Cafe – Fast Food Kiosk</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+/* ===================== RESET & VARIABLES ===================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --red:    #E8262A;
+  --orange: #FF6B1A;
+  --yellow: #FFD015;
+  --cream:  #FFF8EE;
+  --dark:   #1A0A00;
+  --brown:  #3D1E00;
+  --white:  #FFFFFF;
+  --grad:   linear-gradient(135deg, #E8262A 0%, #FF6B1A 50%, #FFD015 100%);
+  --shadow: 0 20px 60px rgba(232,38,42,0.25);
+  --card-shadow: 0 12px 40px rgba(0,0,0,0.18);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--cream);
+  color: var(--dark);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ===================== CUSTOM CURSOR ===================== */
+.cursor {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--red);
+  position: fixed; top: 0; left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: transform 0.1s, width 0.2s, height 0.2s, background 0.2s;
+  mix-blend-mode: multiply;
+}
+.cursor-ring {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 2px solid var(--orange);
+  position: fixed; top: 0; left: 0;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: transform 0.15s ease-out, width 0.2s, height 0.2s;
+}
+body:has(a:hover) .cursor, body:has(button:hover) .cursor { width: 28px; height: 28px; background: var(--yellow); }
+
+/* ===================== SCROLLBAR ===================== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--cream); }
+::-webkit-scrollbar-thumb { background: var(--red); border-radius: 3px; }
+
+/* ===================== NAVBAR ===================== */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 60px;
+  background: rgba(255,248,238,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(232,38,42,0.12);
+  transition: box-shadow 0.3s;
+}
+nav.scrolled { box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
+
+.logo-wrap { display: flex; align-items: center; gap: 14px; }
+.logo-badge {
+  width: 52px; height: 52px;
+  background: var(--grad);
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Fredoka One', cursive;
+  font-size: 22px; color: white;
+  box-shadow: 0 6px 20px rgba(232,38,42,0.4);
+  transform: rotate(-6deg);
+  transition: transform 0.3s;
+  overflow: hidden;
+}
+.logo-badge:hover { transform: rotate(0deg) scale(1.1); }
+.logo-badge img { width: 100%; height: 100%; object-fit: cover; border-radius: 16px; }
+.logo-img-placeholder {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Fredoka One', cursive;
+  font-size: 22px; color: white;
+}
+.logo-text { font-family: 'Fredoka One', cursive; font-size: 26px; color: var(--dark); line-height: 1; }
+.logo-sub { font-size: 11px; font-weight: 700; letter-spacing: 3px; color: var(--red); text-transform: uppercase; }
+
+.nav-links { display: flex; gap: 36px; list-style: none; }
+.nav-links a {
+  text-decoration: none; font-weight: 700; font-size: 15px; color: var(--brown);
+  position: relative; padding-bottom: 4px; transition: color 0.2s;
+}
+.nav-links a::after {
+  content: ''; position: absolute; bottom: 0; left: 0;
+  width: 0; height: 2px; background: var(--red); border-radius: 2px;
+  transition: width 0.3s;
+}
+.nav-links a:hover { color: var(--red); }
+.nav-links a:hover::after { width: 100%; }
+
+.nav-cta {
+  background: var(--grad); color: white;
+  padding: 11px 28px; border-radius: 50px;
+  font-weight: 800; font-size: 14px;
+  text-decoration: none; letter-spacing: 0.5px;
+  box-shadow: 0 6px 20px rgba(232,38,42,0.35);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.nav-cta:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(232,38,42,0.5); }
+
+/* ===================== HERO ===================== */
+.hero {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+  padding-top: 90px;
+}
+
+.hero-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 70% at 60% 50%, rgba(255,107,26,0.12) 0%, transparent 70%),
+              radial-gradient(ellipse 60% 80% at 20% 80%, rgba(232,38,42,0.08) 0%, transparent 60%);
+}
+
+/* Floating blobs */
+.blob {
+  position: absolute; border-radius: 50%;
+  filter: blur(60px); opacity: 0.5;
+  animation: floatBlob 8s ease-in-out infinite;
+}
+.blob1 { width: 400px; height: 400px; background: rgba(255,208,21,0.35); top: -100px; right: -100px; animation-delay: 0s; }
+.blob2 { width: 300px; height: 300px; background: rgba(232,38,42,0.2); bottom: 50px; left: -80px; animation-delay: -3s; }
+.blob3 { width: 200px; height: 200px; background: rgba(255,107,26,0.3); top: 50%; left: 40%; animation-delay: -6s; }
+
+@keyframes floatBlob {
+  0%,100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-30px) scale(1.05); }
+}
+
+/* Dotted grid */
+.hero-bg::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(232,38,42,0.15) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.hero-inner {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 60px; align-items: center;
+  max-width: 1200px; width: 100%; padding: 0 40px;
+  position: relative; z-index: 2;
+}
+
+.hero-text { animation: heroIn 0.9s cubic-bezier(0.16,1,0.3,1) both; }
+@keyframes heroIn { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(232,38,42,0.1); border: 1px solid rgba(232,38,42,0.2);
+  color: var(--red); padding: 6px 18px; border-radius: 50px;
+  font-size: 12px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
+  margin-bottom: 22px;
+}
+.hero-eyebrow span { width: 6px; height: 6px; border-radius: 50%; background: var(--red); animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.4); } }
+
+.hero-title {
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(48px, 6vw, 88px);
+  line-height: 0.95;
+  color: var(--dark);
+  margin-bottom: 24px;
+}
+.hero-title .highlight {
+  background: var(--grad);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: block;
+}
+
+.hero-desc {
+  font-size: 18px; line-height: 1.7;
+  color: #5a3a1a; max-width: 480px;
+  margin-bottom: 40px;
+}
+
+.hero-btns { display: flex; gap: 16px; flex-wrap: wrap; }
+.btn-primary {
+  background: var(--grad); color: white;
+  padding: 16px 36px; border-radius: 50px;
+  font-weight: 800; font-size: 16px; text-decoration: none;
+  box-shadow: 0 10px 30px rgba(232,38,42,0.4);
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-primary:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(232,38,42,0.5); }
+
+.btn-secondary {
+  background: white; color: var(--dark);
+  padding: 16px 36px; border-radius: 50px;
+  font-weight: 800; font-size: 16px; text-decoration: none;
+  border: 2px solid rgba(0,0,0,0.1);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn-secondary:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
+
+/* Hero stats */
+.hero-stats {
+  display: flex; gap: 32px; margin-top: 48px;
+  padding-top: 32px; border-top: 1px solid rgba(0,0,0,0.08);
+}
+.stat-item { }
+.stat-num { font-family: 'Fredoka One', cursive; font-size: 32px; color: var(--red); }
+.stat-label { font-size: 13px; font-weight: 600; color: #888; letter-spacing: 0.5px; }
+
+/* Hero visual */
+.hero-visual {
+  position: relative;
+  animation: heroIn 0.9s 0.2s cubic-bezier(0.16,1,0.3,1) both;
+}
+
+.hero-3d-card {
+  background: white;
+  border-radius: 32px;
+  padding: 32px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.04);
+  transform: perspective(1000px) rotateY(-12deg) rotateX(4deg);
+  transition: transform 0.5s ease;
+  position: relative; overflow: hidden;
+}
+.hero-3d-card:hover { transform: perspective(1000px) rotateY(-6deg) rotateX(2deg) scale(1.02); }
+.hero-3d-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+  background: var(--grad);
+}
+
+.food-showcase {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 12px;
+}
+.food-item-mini {
+  background: var(--cream);
+  border-radius: 20px; padding: 16px 12px;
+  text-align: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: default;
+}
+.food-item-mini:hover { transform: translateY(-6px) scale(1.04); box-shadow: 0 12px 30px rgba(0,0,0,0.12); }
+.food-emoji { font-size: 40px; display: block; margin-bottom: 6px; }
+.food-name-mini { font-size: 11px; font-weight: 800; color: var(--brown); text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* floating badge on card */
+.card-badge {
+  position: absolute; top: -16px; right: 24px;
+  background: var(--yellow);
+  color: var(--dark);
+  font-family: 'Fredoka One', cursive;
+  font-size: 14px;
+  padding: 8px 18px; border-radius: 50px;
+  box-shadow: 0 6px 20px rgba(255,208,21,0.5);
+  transform: rotate(3deg);
+}
+
+/* ===================== SECTION COMMON ===================== */
+section { padding: 100px 40px; }
+.container { max-width: 1200px; margin: 0 auto; }
+
+.section-header { text-align: center; margin-bottom: 64px; }
+.section-tag {
+  display: inline-block;
+  background: rgba(232,38,42,0.1); color: var(--red);
+  font-size: 11px; font-weight: 800; letter-spacing: 3px;
+  text-transform: uppercase; padding: 6px 18px; border-radius: 50px;
+  margin-bottom: 16px;
+}
+.section-title {
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(34px, 4vw, 56px);
+  color: var(--dark); line-height: 1.1;
+  margin-bottom: 16px;
+}
+.section-title .accent { color: var(--red); }
+.section-desc { font-size: 17px; color: #6b4a1e; max-width: 560px; margin: 0 auto; line-height: 1.7; }
+
+/* ===================== MENU SECTION ===================== */
+#menu { background: var(--cream); }
+
+.menu-tabs {
+  display: flex; gap: 12px; justify-content: center;
+  flex-wrap: wrap; margin-bottom: 48px;
+}
+.menu-tab {
+  padding: 10px 24px; border-radius: 50px;
+  font-weight: 800; font-size: 14px; cursor: pointer;
+  border: 2px solid rgba(0,0,0,0.08);
+  background: white; color: var(--brown);
+  transition: all 0.25s;
+}
+.menu-tab.active, .menu-tab:hover {
+  background: var(--grad); color: white;
+  border-color: transparent;
+  box-shadow: 0 6px 20px rgba(232,38,42,0.35);
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 28px;
+}
+
+.menu-card {
+  background: white;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+  transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s;
+  position: relative;
+  transform-style: preserve-3d;
+  cursor: pointer;
+}
+.menu-card:hover {
+  transform: translateY(-12px) rotateX(4deg);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.16);
+}
+
+.menu-card-img {
+  height: 200px;
+  background: linear-gradient(135deg, #fff5e6, #ffe8cc);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 80px;
+  position: relative; overflow: hidden;
+}
+.menu-card-img::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+  height: 40px;
+  background: linear-gradient(to bottom, transparent, white);
+}
+/* If user adds real image */
+.menu-card-img img {
+  width: 100%; height: 100%; object-fit: cover;
+  position: absolute; top: 0; left: 0;
+}
+
+.menu-tag-badge {
+  position: absolute; top: 14px; left: 14px; z-index: 2;
+  padding: 5px 14px; border-radius: 50px;
+  font-size: 11px; font-weight: 800; letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.tag-hot { background: var(--red); color: white; }
+.tag-popular { background: var(--orange); color: white; }
+.tag-new { background: var(--yellow); color: var(--dark); }
+.tag-veg { background: #27ae60; color: white; }
+
+.menu-card-body { padding: 20px 22px 22px; }
+.menu-card-name { font-family: 'Fredoka One', cursive; font-size: 22px; color: var(--dark); margin-bottom: 6px; }
+.menu-card-desc { font-size: 13px; color: #888; line-height: 1.5; margin-bottom: 14px; }
+.menu-card-footer { display: flex; align-items: center; justify-content: space-between; }
+.menu-price { font-family: 'Fredoka One', cursive; font-size: 24px; color: var(--red); }
+.menu-price span { font-size: 14px; font-weight: 700; color: #bbb; text-decoration: line-through; margin-left: 6px; }
+.add-btn {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--grad); border: none;
+  color: white; font-size: 22px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 16px rgba(232,38,42,0.4);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.add-btn:hover { transform: scale(1.15) rotate(15deg); box-shadow: 0 8px 24px rgba(232,38,42,0.55); }
+
+/* Stars */
+.stars { color: var(--yellow); font-size: 13px; margin-bottom: 4px; }
+
+/* ===================== ABOUT SECTION ===================== */
+#about {
+  background: var(--dark);
+  color: white;
+  position: relative; overflow: hidden;
+}
+#about::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 80% at 80% 50%, rgba(255,107,26,0.1), transparent);
+}
+#about .section-title { color: white; }
+#about .section-desc { color: rgba(255,255,255,0.6); }
+#about .section-tag { background: rgba(255,107,26,0.15); color: var(--orange); }
+
+.about-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 80px; align-items: center;
+  position: relative; z-index: 2;
+}
+.about-img-wrap {
+  position: relative;
+}
+.about-img {
+  width: 100%; aspect-ratio: 4/3;
+  border-radius: 28px;
+  background: linear-gradient(135deg, #2a1200, #3d1a00);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 120px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+  overflow: hidden;
+  position: relative;
+}
+.about-img img { width:100%;height:100%;object-fit:cover;border-radius:28px; }
+.about-img-emoji { position: relative; z-index:2; }
+.about-float-badge {
+  position: absolute; bottom: -20px; right: -20px;
+  background: var(--red); color: white;
+  width: 100px; height: 100px; border-radius: 50%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-family: 'Fredoka One', cursive; font-size: 28px;
+  box-shadow: 0 10px 30px rgba(232,38,42,0.5);
+  animation: spinBadge 20s linear infinite;
+}
+@keyframes spinBadge { to { transform: rotate(360deg); } }
+.about-float-badge-inner { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; margin-top: 2px; }
+
+.about-content { }
+.about-features { margin-top: 32px; display: flex; flex-direction: column; gap: 16px; }
+.about-feature {
+  display: flex; align-items: flex-start; gap: 16px;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px; padding: 16px 20px;
+  transition: background 0.2s;
+}
+.about-feature:hover { background: rgba(255,255,255,0.07); }
+.feature-icon {
+  width: 44px; height: 44px; border-radius: 12px;
+  background: rgba(232,38,42,0.15); display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+}
+.feature-text h4 { font-weight: 800; font-size: 15px; margin-bottom: 4px; }
+.feature-text p { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.5; }
+
+/* ===================== TESTIMONIALS ===================== */
+#reviews { background: white; }
+
+.reviews-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+.review-card {
+  background: var(--cream);
+  border-radius: 24px; padding: 28px;
+  position: relative;
+  transition: transform 0.3s, box-shadow 0.3s;
+  border: 1px solid rgba(0,0,0,0.04);
+}
+.review-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(0,0,0,0.1); }
+.review-card::before {
+  content: '"'; font-family: 'Fredoka One', cursive;
+  font-size: 80px; color: rgba(232,38,42,0.1);
+  position: absolute; top: 10px; right: 20px; line-height: 1;
+}
+.reviewer { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.reviewer-avatar {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--grad); display: flex; align-items: center; justify-content: center;
+  font-family: 'Fredoka One', cursive; font-size: 20px; color: white;
+  flex-shrink: 0;
+}
+.reviewer-name { font-weight: 800; font-size: 15px; color: var(--dark); }
+.reviewer-date { font-size: 12px; color: #aaa; }
+.review-text { font-size: 14px; line-height: 1.7; color: #5a3a1a; }
+
+/* Google Review CTA */
+.google-review-cta {
+  margin-top: 60px; text-align: center;
+}
+.google-review-btn {
+  display: inline-flex; align-items: center; gap: 12px;
+  background: white; color: var(--dark);
+  padding: 18px 40px; border-radius: 50px;
+  font-weight: 800; font-size: 16px;
+  text-decoration: none;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12), 0 0 0 2px rgba(0,0,0,0.06);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.google-review-btn:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(0,0,0,0.18); }
+.google-icon {
+  width: 28px; height: 28px;
+}
+
+/* ===================== FEEDBACK FORM ===================== */
+#feedback { background: var(--cream); }
+
+.feedback-wrap {
+  display: grid; grid-template-columns: 1fr 1.2fr;
+  gap: 60px; align-items: start;
+}
+.feedback-info h3 { font-family: 'Fredoka One', cursive; font-size: 36px; color: var(--dark); margin-bottom: 16px; }
+.feedback-info p { font-size: 16px; color: #6b4a1e; line-height: 1.7; margin-bottom: 32px; }
+
+.contact-items { display: flex; flex-direction: column; gap: 20px; }
+.contact-item {
+  display: flex; align-items: center; gap: 16px;
+}
+.contact-icon {
+  width: 50px; height: 50px; border-radius: 16px;
+  background: white; box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+}
+.contact-item h4 { font-weight: 800; font-size: 13px; color: var(--red); text-transform: uppercase; letter-spacing: 1px; }
+.contact-item p { font-size: 14px; color: var(--brown); font-weight: 600; }
+
+.form-card {
+  background: white;
+  border-radius: 32px;
+  padding: 40px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+}
+.form-title { font-family: 'Fredoka One', cursive; font-size: 28px; color: var(--dark); margin-bottom: 28px; }
+
+.form-group { margin-bottom: 20px; }
+.form-group label {
+  display: block; font-weight: 800; font-size: 13px;
+  color: var(--brown); margin-bottom: 8px;
+  text-transform: uppercase; letter-spacing: 0.8px;
+}
+.form-group input, .form-group textarea, .form-group select {
+  width: 100%; padding: 14px 18px;
+  border: 2px solid rgba(0,0,0,0.08);
+  border-radius: 14px; font-family: 'Nunito', sans-serif;
+  font-size: 15px; color: var(--dark);
+  background: var(--cream);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+  border-color: var(--red);
+  box-shadow: 0 0 0 4px rgba(232,38,42,0.1);
+  background: white;
+}
+.form-group textarea { resize: vertical; min-height: 120px; }
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+/* Rating stars */
+.star-rating { display: flex; gap: 6px; }
+.star-rating input { display: none; }
+.star-rating label { font-size: 30px; cursor: pointer; color: #ddd; transition: color 0.15s; }
+.star-rating input:checked ~ label,
+.star-rating label:hover,
+.star-rating label:hover ~ label { color: var(--yellow) !important; }
+.star-rating { flex-direction: row-reverse; justify-content: flex-end; }
+.star-rating label:hover, .star-rating label:hover ~ label { color: var(--yellow); }
+
+.form-submit {
+  width: 100%; padding: 16px;
+  background: var(--grad); color: white;
+  border: none; border-radius: 14px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px; font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(232,38,42,0.35);
+  transition: transform 0.2s, box-shadow 0.2s;
+  margin-top: 8px;
+}
+.form-submit:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(232,38,42,0.5); }
+.form-submit:active { transform: translateY(0); }
+
+.form-success {
+  display: none;
+  text-align: center; padding: 32px;
+  animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes popIn { from { opacity:0; transform: scale(0.7); } to { opacity:1; transform: scale(1); } }
+.success-emoji { font-size: 60px; margin-bottom: 16px; }
+.form-success h3 { font-family: 'Fredoka One', cursive; font-size: 28px; color: var(--red); }
+.form-success p { color: #888; margin-top: 8px; }
+
+#submission-status { font-size: 14px; margin-top: 12px; text-align: center; font-weight: 700; }
+
+/* ===================== FOOTER ===================== */
+footer {
+  background: var(--dark);
+  color: white; padding: 60px 40px 32px;
+}
+.footer-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 60px;
+  margin-bottom: 48px;
+}
+.footer-brand .logo-badge { margin-bottom: 16px; display: inline-flex; }
+.footer-brand p { color: rgba(255,255,255,0.5); font-size: 14px; line-height: 1.7; max-width: 280px; margin-top: 12px; }
+
+.footer-col h4 { font-weight: 800; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--orange); margin-bottom: 20px; }
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-col ul li a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 14px; font-weight: 600; transition: color 0.2s; }
+.footer-col ul li a:hover { color: white; }
+
+.footer-bottom {
+  max-width: 1200px; margin: 0 auto;
+  padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.06);
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 13px; color: rgba(255,255,255,0.3);
+}
+.footer-bottom a { color: var(--orange); text-decoration: none; }
+
+/* Social icons */
+.social-row { display: flex; gap: 12px; margin-top: 20px; }
+.social-icon {
+  width: 40px; height: 40px; border-radius: 12px;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; text-decoration: none;
+  transition: background 0.2s, transform 0.2s;
+}
+.social-icon:hover { background: var(--red); transform: translateY(-3px); }
+
+/* ===================== SCROLL REVEAL ===================== */
+.reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.7s, transform 0.7s; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ===================== FLOATING CART ===================== */
+.floating-cart {
+  position: fixed; bottom: 30px; right: 30px; z-index: 900;
+  width: 60px; height: 60px; border-radius: 50%;
+  background: var(--grad);
+  box-shadow: 0 8px 30px rgba(232,38,42,0.5);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+  animation: floatCart 3s ease-in-out infinite;
+}
+.floating-cart:hover { transform: scale(1.15); box-shadow: 0 12px 40px rgba(232,38,42,0.65); }
+@keyframes floatCart { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+.cart-badge {
+  position: absolute; top: -4px; right: -4px;
+  background: var(--yellow); color: var(--dark);
+  width: 22px; height: 22px; border-radius: 50%;
+  font-size: 11px; font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ===================== RESPONSIVE ===================== */
+@media (max-width: 900px) {
+  nav { padding: 14px 24px; }
+  .nav-links, .nav-cta { display: none; }
+  .hero-inner { grid-template-columns: 1fr; }
+  .hero-3d-card { transform: none; }
+  .about-grid, .feedback-wrap, .footer-inner { grid-template-columns: 1fr; }
+  section { padding: 70px 24px; }
+  .hero { padding-top: 80px; }
+  .hero-inner { padding: 0 16px; gap: 40px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Custom Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Floating Cart -->
+<div class="floating-cart" title="View Cart">
+  🛒
+  <div class="cart-badge" id="cartBadge">0</div>
+</div>
+
+<!-- ===================== NAVBAR ===================== -->
+<nav id="navbar">
+  <div class="logo-wrap">
+    <div class="logo-badge">
+      <!-- Replace src with your logo file once ready -->
+      <div class="logo-img-placeholder" id="logoDisplay">PC</div>
+    </div>
+    <div>
+      <div class="logo-text">Pranaav Cafe</div>
+      <div class="logo-sub">Fast Food Kiosk</div>
+    </div>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#reviews">Reviews</a></li>
+    <li><a href="#feedback">Contact</a></li>
+  </ul>
+  <a href="#menu" class="nav-cta">Order Now 🔥</a>
+</nav>
+
+<!-- ===================== HERO ===================== -->
+<section class="hero" id="home">
+  <div class="hero-bg">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
+  </div>
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-eyebrow">
+        <span></span> Open Now – Fresh & Hot
+      </div>
+      <h1 class="hero-title">
+        Taste The
+        <span class="highlight">Street Magic</span>
+      </h1>
+      <p class="hero-desc">
+        From crispy Golgappa to juicy Burgers, spicy Momos to refreshing Mojito —
+        every bite is an experience. Fresh. Fast. Flavourful.
+      </p>
+      <div class="hero-btns">
+        <a href="#menu" class="btn-primary">🍔 Explore Menu</a>
+        <a href="#feedback" class="btn-secondary">💬 Feedback</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-num">6+</div>
+          <div class="stat-label">Food Items</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">500+</div>
+          <div class="stat-label">Happy Customers</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">4.9★</div>
+          <div class="stat-label">Google Rating</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="card-badge">🔥 Today's Special</div>
+      <div class="hero-3d-card">
+        <div class="food-showcase" id="heroShowcase">
+          <div class="food-item-mini"><span class="food-emoji">💧</span><div class="food-name-mini">Golgappa</div></div>
+          <div class="food-item-mini"><span class="food-emoji">🥙</span><div class="food-name-mini">Vada Pav</div></div>
+          <div class="food-item-mini"><span class="food-emoji">🍹</span><div class="food-name-mini">Mojito</div></div>
+          <div class="food-item-mini"><span class="food-emoji">🍔</span><div class="food-name-mini">Burger</div></div>
+          <div class="food-item-mini"><span class="food-emoji">🍟</span><div class="food-name-mini">Fries</div></div>
+          <div class="food-item-mini"><span class="food-emoji">🥟</span><div class="food-name-mini">Momo</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== MENU ===================== -->
+<section id="menu">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag">Our Menu</div>
+      <h2 class="section-title">What's <span class="accent">Cooking?</span></h2>
+      <p class="section-desc">Handcrafted with love, every item is made fresh to order. Pick your favourite!</p>
+    </div>
+
+    <div class="menu-tabs reveal">
+      <button class="menu-tab active" onclick="filterMenu('all')">All Items</button>
+      <button class="menu-tab" onclick="filterMenu('snacks')">Snacks</button>
+      <button class="menu-tab" onclick="filterMenu('drinks')">Drinks</button>
+      <button class="menu-tab" onclick="filterMenu('meals')">Meals</button>
+    </div>
+
+    <div class="menu-grid" id="menuGrid">
+
+      <!-- Golgappa -->
+      <div class="menu-card reveal" data-category="snacks">
+        <div class="menu-card-img">
+          <!-- <img src="images/golgappa.jpg" alt="Golgappa"> -->
+          💧
+          <span class="menu-tag-badge tag-popular">⭐ Popular</span>
+        </div>
+        <div class="menu-card-body">
+          <div class="stars">★★★★★</div>
+          <div class="menu-card-name">Golgappa / Pani Puri</div>
+          <div class="menu-card-desc">Crispy puris filled with spicy tangy water, tamarind chutney & masala chickpeas.</div>
+          <div class="menu-card-footer">
+            <div class="menu-price">₹40 <span>₹55</span></div>
+            <button class="add-btn" onclick="addToCart(this,'Golgappa')">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vada Pav -->
+      <div class="menu-card reveal" data-category="snacks">
+        <div class="menu-card-img">
+          <!-- <img src="images/vadapav.jpg" alt="Vada Pav"> -->
+          🥙
+          <span class="menu-tag-badge tag-hot">🔥 Hot</span>
+        </div>
+        <div class="menu-card-body">
+          <div class="stars">★★★★★</div>
+          <div class="menu-card-name">Vada Pav</div>
+          <div class="menu-card-desc">Mumbai-style spiced potato fritter in a soft bun with green & tamarind chutneys.</div>
+          <div class="menu-card-footer">
+            <div class="menu-price">₹30 <span>₹40</span></div>
+            <button class="add-btn" onclick="addToCart(this,'Vada Pav')">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mojito -->
+      <div class="menu-card reveal" data-category="drinks">
+        <div class="menu-card-img">
+          <!-- <img src="images/mojito.jpg" alt="Mojito"> -->
+          🍹
+          <span class="menu-tag-badge tag-new">✨ New</span>
+        </div>
+        <div class="menu-card-body">
+          <div class="stars">★★★★☆</div>
+          <div class="menu-card-name">Virgin Mojito</div>
+          <div class="menu-card-desc">Refreshing mint, lime & soda with a hint of sugar syrup. The perfect cooldown.</div>
+          <div class="menu-card-footer">
+            <div class="menu-price">₹60 <span>₹80</span></div>
+            <button class="add-btn" onclick="addToCart(this,'Mojito')">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Burger -->
+      <div class="menu-card reveal" data-category="meals">
+        <div class="menu-card-img">
+          <!-- <img src="images/burger.jpg" alt="Burger"> -->
+          🍔
+          <span class="menu-tag-badge tag-hot">🔥 Best Seller</span>
+        </div>
+        <div class="menu-card-body">
+          <div class="stars">★★★★★</div>
+          <div class="menu-card-name">Crispy Burger</div>
+          <div class="menu-card-desc">Crunchy patty, fresh veggies, special sauce, all tucked in a toasted sesame bun.</div>
+          <div class="menu-card-footer">
+            <div class="menu-price">₹80 <span>₹110</span></div>
+            <button class="add-btn" onclick="addToCart(this,'Burger')">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- French Fries -->
+      <div class="menu-card reveal" data-category="snacks">
+        <div class="menu-card-img">
+          <!-- <img src="images/fries.jpg" alt="French Fries"> -->
+          🍟
+          <span class="menu-tag-badge tag-veg">🥦 Veg</span>
+        </div>
+        <div class="menu-card-body">
+          <div class="stars">★★★★★</div>
+          <div class="menu-card-name">French Fries</div>
+          <div class="menu-card-desc">Golden crispy fries seasoned with our secret spice blend. Served with dipping sauce.</div>
+          <div class="menu-card-footer">
+            <div class="menu-price">₹60 <span>₹75</span></div>
+            <button class="add-btn" onclick="addToCart(this,'French Fries')">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Momo -->
+      <div class="menu-card reveal" data-category="snacks">
+        <div class="menu-card-img">
+          <!-- <img src="images/momo.jpg" alt="Momo"> -->
+          🥟
+          <span class="menu-tag-badge tag-popular">⭐ Trending</span>
+        </div>
+        <div class="menu-card-body">
+          <div class="stars">★★★★★</div>
+          <div class="menu-card-name">Steamed Momos</div>
+          <div class="menu-card-desc">Handmade dumplings stuffed with veggies & spices. Served with fiery red chilli chutney.</div>
+          <div class="menu-card-footer">
+            <div class="menu-price">₹70 <span>₹90</span></div>
+            <button class="add-btn" onclick="addToCart(this,'Momos')">+</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ABOUT ===================== -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-img-wrap reveal">
+        <div class="about-img">
+          <!-- <img src="images/about-cafe.jpg" alt="Pranaav Cafe"> -->
+          <span class="about-img-emoji">🏪</span>
+        </div>
+        <div class="about-float-badge">
+          ⭐4.9
+          <span class="about-float-badge-inner">Rating</span>
+        </div>
+      </div>
+      <div class="about-content reveal">
+        <div class="section-tag">About Us</div>
+        <h2 class="section-title" style="text-align:left;">The Story Behind<br><span class="accent">Pranaav Cafe</span></h2>
+        <p class="section-desc" style="text-align:left; max-width: none;">
+          Born from a love for street food and bold flavours, Pranaav Cafe brings together the best of Indian snacks
+          and modern fast food under one roof. Fresh ingredients, bold recipes, and a whole lot of heart.
+        </p>
+        <div class="about-features">
+          <div class="about-feature">
+            <div class="feature-icon">🌿</div>
+            <div class="feature-text">
+              <h4>100% Fresh Ingredients</h4>
+              <p>We source fresh vegetables and spices daily for maximum flavour and quality.</p>
+            </div>
+          </div>
+          <div class="about-feature">
+            <div class="feature-icon">⚡</div>
+            <div class="feature-text">
+              <h4>Fast & Hot Delivery</h4>
+              <p>Your food is prepared and served hot within minutes of ordering.</p>
+            </div>
+          </div>
+          <div class="about-feature">
+            <div class="feature-icon">❤️</div>
+            <div class="feature-text">
+              <h4>Made With Love</h4>
+              <p>Every item is handcrafted with care, just like home — but tastier!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== REVIEWS ===================== -->
+<section id="reviews">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag">Happy Customers</div>
+      <h2 class="section-title">What People <span class="accent">Say</span></h2>
+      <p class="section-desc">Real reviews from real foodies who love Pranaav Cafe.</p>
+    </div>
+
+    <div class="reviews-grid">
+      <div class="review-card reveal">
+        <div class="reviewer">
+          <div class="reviewer-avatar">R</div>
+          <div>
+            <div class="reviewer-name">Rahul Sharma</div>
+            <div class="stars">★★★★★</div>
+            <div class="reviewer-date">2 weeks ago · via Google</div>
+          </div>
+        </div>
+        <p class="review-text">The Golgappa here is absolutely divine! Best pani puri I've had in years. The flavors are so authentic and the service was super fast. Definitely my go-to spot now!</p>
+      </div>
+
+      <div class="review-card reveal">
+        <div class="reviewer">
+          <div class="reviewer-avatar" style="background:linear-gradient(135deg,#ff6b1a,#ffd015);">P</div>
+          <div>
+            <div class="reviewer-name">Priya Mehta</div>
+            <div class="stars">★★★★★</div>
+            <div class="reviewer-date">1 month ago · via Google</div>
+          </div>
+        </div>
+        <p class="review-text">Momos are a must-try! The chutney they serve alongside is just incredible. The Mojito was super refreshing too. Love the vibe of this place. Will come back every week!</p>
+      </div>
+
+      <div class="review-card reveal">
+        <div class="reviewer">
+          <div class="reviewer-avatar" style="background:linear-gradient(135deg,#e8262a,#ff6b1a);">A</div>
+          <div>
+            <div class="reviewer-name">Arjun Patel</div>
+            <div class="stars">★★★★★</div>
+            <div class="reviewer-date">3 weeks ago · via Google</div>
+          </div>
+        </div>
+        <p class="review-text">The crispy burger is absolutely worth every rupee! Juicy, loaded with toppings and that special sauce is addictive. The fries were perfectly seasoned too. Pranaav Cafe is a gem!</p>
+      </div>
+    </div>
+
+    <div class="google-review-cta reveal">
+      <p style="color:#888;font-size:14px;margin-bottom:20px;font-weight:600;">Enjoyed your visit? Share your experience on Google!</p>
+      <!-- 
+        HOW TO GET YOUR GOOGLE REVIEW LINK:
+        1. Go to Google Maps
+        2. Search for "Pranaav Cafe" (once listed)
+        3. Click "Get more reviews"
+        4. Copy the short URL and replace the href below
+        Currently using a search-based link as placeholder.
+      -->
+      <a href="https://search.google.com/local/writereview?placeid=YOUR_PLACE_ID_HERE" 
+         target="_blank" class="google-review-btn" id="googleReviewBtn">
+        <!-- Google G logo SVG -->
+        <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Write a Google Review ⭐
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FEEDBACK FORM ===================== -->
+<section id="feedback">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag">Feedback</div>
+      <h2 class="section-title">We Love <span class="accent">Hearing</span> From You</h2>
+      <p class="section-desc">Your feedback helps us serve you better. Drop us a message!</p>
+    </div>
+
+    <div class="feedback-wrap">
+      <div class="feedback-info reveal">
+        <h3>Get In Touch</h3>
+        <p>Have a suggestion, complaint, or just want to say hi? Fill the form and we'll get back to you. Your opinion makes us better!</p>
+
+        <div class="contact-items">
+          <div class="contact-item">
+            <div class="contact-icon">📍</div>
+            <div>
+              <h4>Location</h4>
+              <!-- Update your address below -->
+              <p>Your Kiosk Address, City, State</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">⏰</div>
+            <div>
+              <h4>Hours</h4>
+              <p>Mon – Sun: 10:00 AM – 10:00 PM</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">📞</div>
+            <div>
+              <h4>Call / WhatsApp</h4>
+              <!-- Update your phone number below -->
+              <p>+91 XXXXX XXXXX</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">📧</div>
+            <div>
+              <h4>Email</h4>
+              <!-- Update your email below -->
+              <p>pranaav.cafe@gmail.com</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-card reveal">
+        <div id="formContent">
+          <div class="form-title">Share Your Experience 💬</div>
+          <form id="feedbackForm" onsubmit="submitFeedback(event)">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Your Name *</label>
+                <input type="text" id="fname" placeholder="e.g. Priya Sharma" required>
+              </div>
+              <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" id="fphone" placeholder="+91 XXXXX XXXXX">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Email Address</label>
+              <input type="email" id="femail" placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+              <label>What Did You Order?</label>
+              <select id="fitem">
+                <option value="">– Select an item –</option>
+                <option>Golgappa / Pani Puri</option>
+                <option>Vada Pav</option>
+                <option>Virgin Mojito</option>
+                <option>Crispy Burger</option>
+                <option>French Fries</option>
+                <option>Steamed Momos</option>
+                <option>Multiple Items</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Your Rating</label>
+              <div class="star-rating" id="starRating">
+                <input type="radio" name="rating" id="s5" value="5"><label for="s5">★</label>
+                <input type="radio" name="rating" id="s4" value="4"><label for="s4">★</label>
+                <input type="radio" name="rating" id="s3" value="3"><label for="s3">★</label>
+                <input type="radio" name="rating" id="s2" value="2"><label for="s2">★</label>
+                <input type="radio" name="rating" id="s1" value="1"><label for="s1">★</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Your Feedback *</label>
+              <textarea id="fmessage" placeholder="Tell us about your experience…" required></textarea>
+            </div>
+            <button type="submit" class="form-submit" id="submitBtn">
+              Send Feedback 🚀
+            </button>
+            <div id="submission-status"></div>
+          </form>
+        </div>
+        <div class="form-success" id="formSuccess">
+          <div class="success-emoji">🎉</div>
+          <h3>Thank You!</h3>
+          <p>Your feedback has been recorded. We really appreciate it!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="logo-wrap">
+        <div class="logo-badge" style="transform:none;">PC</div>
+        <div>
+          <div class="logo-text" style="color:white;">Pranaav Cafe</div>
+          <div class="logo-sub">Fast Food Kiosk</div>
+        </div>
+      </div>
+      <p>Your favourite neighbourhood kiosk serving fresh, flavourful street food & fast food with a smile. Come hungry, leave happy!</p>
+      <div class="social-row">
+        <a href="#" class="social-icon">📘</a>
+        <a href="#" class="social-icon">📸</a>
+        <a href="#" class="social-icon">🐦</a>
+        <a href="#" class="social-icon">▶️</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#menu">Menu</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#reviews">Reviews</a></li>
+        <li><a href="#feedback">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Our Menu</h4>
+      <ul>
+        <li><a href="#menu">Golgappa / Pani Puri</a></li>
+        <li><a href="#menu">Vada Pav</a></li>
+        <li><a href="#menu">Virgin Mojito</a></li>
+        <li><a href="#menu">Crispy Burger</a></li>
+        <li><a href="#menu">French Fries</a></li>
+        <li><a href="#menu">Steamed Momos</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2024 Pranaav Cafe. All rights reserved.</span>
+    <span>Made with ❤️ for food lovers</span>
+  </div>
+</footer>
+
+<!-- ===================== SCRIPTS ===================== -->
+<script>
+/* ---- Cursor ---- */
+const cursor = document.getElementById('cursor');
+const ring   = document.getElementById('cursorRing');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top  = e.clientY + 'px';
+  setTimeout(() => {
+    ring.style.left = e.clientX + 'px';
+    ring.style.top  = e.clientY + 'px';
+  }, 80);
+});
+
+/* ---- Navbar scroll ---- */
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', scrollY > 40);
+});
+
+/* ---- Scroll reveal ---- */
+const observer = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 80);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+/* ---- 3D tilt on hero card ---- */
+const card = document.querySelector('.hero-3d-card');
+if (card) {
+  document.querySelector('.hero-visual').addEventListener('mousemove', e => {
+    const rect = card.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width  - 0.5;
+    const y = (e.clientY - rect.top)  / rect.height - 0.5;
+    card.style.transform = `perspective(1000px) rotateY(${x * 20 - 6}deg) rotateX(${-y * 10 + 2}deg)`;
+  });
+  document.querySelector('.hero-visual').addEventListener('mouseleave', () => {
+    card.style.transform = 'perspective(1000px) rotateY(-12deg) rotateX(4deg)';
+  });
+}
+
+/* ---- Cart ---- */
+let cartCount = 0;
+function addToCart(btn, item) {
+  cartCount++;
+  document.getElementById('cartBadge').textContent = cartCount;
+  btn.textContent = '✓';
+  btn.style.background = 'linear-gradient(135deg,#27ae60,#2ecc71)';
+  setTimeout(() => { btn.textContent = '+'; btn.style.background = ''; }, 1500);
+  // Animated toast
+  showToast(`${item} added to cart! 🛒`);
+}
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.textContent = msg;
+  Object.assign(t.style, {
+    position: 'fixed', bottom: '100px', right: '30px', zIndex: '999',
+    background: 'linear-gradient(135deg,#1a0a00,#3d1e00)',
+    color: 'white', padding: '12px 22px', borderRadius: '50px',
+    fontFamily: "'Nunito',sans-serif", fontWeight: '700', fontSize: '14px',
+    boxShadow: '0 8px 30px rgba(0,0,0,0.3)',
+    transform: 'translateY(20px)', opacity: '0',
+    transition: 'all 0.3s cubic-bezier(0.34,1.56,0.64,1)'
+  });
+  document.body.appendChild(t);
+  requestAnimationFrame(() => { t.style.transform = 'translateY(0)'; t.style.opacity = '1'; });
+  setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateY(10px)'; setTimeout(() => t.remove(), 300); }, 2000);
+}
+
+/* ---- Menu filter ---- */
+function filterMenu(cat) {
+  document.querySelectorAll('.menu-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('.menu-card').forEach(card => {
+    const show = cat === 'all' || card.dataset.category === cat;
+    card.style.display = show ? '' : 'none';
+    if (show) { card.style.animation = 'none'; card.offsetHeight; card.style.animation = ''; }
+  });
+}
+
+/* ---- Feedback Form → Google Sheets ---- */
+/*
+  HOW TO CONNECT TO GOOGLE SHEETS:
+  1. Create a Google Sheet with these columns:
+     Timestamp | Name | Phone | Email | Item | Rating | Message
+  2. In the Sheet, go to Extensions → Apps Script
+  3. Paste this script:
+     -------------------------
+     function doPost(e) {
+       var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+       var data = JSON.parse(e.postData.contents);
+       sheet.appendRow([
+         new Date(),
+         data.name, data.phone, data.email,
+         data.item, data.rating, data.message
+       ]);
+       return ContentService.createTextOutput(JSON.stringify({status:'OK'}))
+         .setMimeType(ContentService.MimeType.JSON);
+     }
+     -------------------------
+  4. Click Deploy → New Deployment → Web App
+     - Execute as: Me
+     - Who has access: Anyone
+  5. Copy the Web App URL and paste it in SHEETS_URL below.
+*/
+const SHEETS_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
+
+async function submitFeedback(e) {
+  e.preventDefault();
+  const btn    = document.getElementById('submitBtn');
+  const status = document.getElementById('submission-status');
+  const rating = document.querySelector('input[name="rating"]:checked');
+
+  const data = {
+    name:    document.getElementById('fname').value,
+    phone:   document.getElementById('fphone').value,
+    email:   document.getElementById('femail').value,
+    item:    document.getElementById('fitem').value,
+    rating:  rating ? rating.value : 'Not rated',
+    message: document.getElementById('fmessage').value,
+  };
+
+  btn.textContent = 'Sending…';
+  btn.disabled = true;
+  status.style.color = '#888';
+  status.textContent = 'Submitting your feedback…';
+
+  // Check if URL is configured
+  if (SHEETS_URL === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE') {
+    // Demo mode — simulate success
+    await new Promise(r => setTimeout(r, 1200));
+    showSuccessState();
+    return;
+  }
+
+  try {
+    await fetch(SHEETS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    showSuccessState();
+  } catch (err) {
+    status.style.color = 'var(--red)';
+    status.textContent = 'Something went wrong. Please try again.';
+    btn.textContent = 'Send Feedback 🚀';
+    btn.disabled = false;
+  }
+}
+
+function showSuccessState() {
+  document.getElementById('formContent').style.display = 'none';
+  const s = document.getElementById('formSuccess');
+  s.style.display = 'block';
+}
+
+/* ---- Smooth scroll ---- */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+</script>
+</body>
+</html>
