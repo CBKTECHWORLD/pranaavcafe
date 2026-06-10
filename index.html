@@ -274,6 +274,22 @@ nav.scrolled { box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
   transform: rotate(3deg);
 }
 
+.food-img-mini {
+  width: 24px;         /* Adjust this size to match your design */
+  height: 24px;        /* Keeps it perfectly square */
+  object-fit: cover;   /* Prevents the image from stretching awkwardly */
+  border-radius: 50%;  /* Optional: makes the image circular like an icon */
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Ensure the container aligns the image and text nicely */
+.food-item-mini {
+  display: flex;
+  align-items: center;
+  gap: 8px;            /* Adds a clean space between the image and the text */
+}
+
 /* ===================== SECTION COMMON ===================== */
 section { padding: 100px 40px; }
 .container { max-width: 1200px; margin: 0 auto; }
@@ -736,19 +752,45 @@ footer {
       </div>
     </div>
 
-    <div class="hero-visual">
-      <div class="card-badge">🔥 Our Special</div>
-      <div class="hero-3d-card">
-        <div class="food-showcase" id="heroShowcase">
-          <div class="food-item-mini"><span class="food-emoji">💧</span><div class="food-name-mini">Golgappa</div></div>
-          <div class="food-item-mini"><span class="food-emoji">🥙</span><div class="food-name-mini">Vada Pav</div></div>
-          <div class="food-item-mini"><span class="food-emoji">🍹</span><div class="food-name-mini">Mojito</div></div>
-          <div class="food-item-mini"><span class="food-emoji">🍔</span><div class="food-name-mini">Burger</div></div>
-          <div class="food-item-mini"><span class="food-emoji">🍟</span><div class="food-name-mini">Fries</div></div>
-          <div class="food-item-mini"><span class="food-emoji">🥟</span><div class="food-name-mini">Momo</div></div>
-        </div>
+
+   <div class="hero-visual">
+  <div class="card-badge">🔥 Our Special</div>
+  <div class="hero-3d-card">
+    <div class="food-showcase" id="heroShowcase">
+      
+      <div class="food-item-mini">
+        <img src="images/golgappa.jpg" alt="Golgappa" class="food-img-mini">
+        <div class="food-name-mini">Golgappa</div>
       </div>
+      
+      <div class="food-item-mini">
+        <img src="images/vada-pav.jpg" alt="Vada Pav" class="food-img-mini">
+        <div class="food-name-mini">Vada Pav</div>
+      </div>
+      
+      <div class="food-item-mini">
+        <img src="images/mojito.jpg" alt="Mojito" class="food-img-mini">
+        <div class="food-name-mini">Mojito</div>
+      </div>
+      
+      <div class="food-item-mini">
+        <img src="images/burger.jpg" alt="Burger" class="food-img-mini">
+        <div class="food-name-mini">Burger</div>
+      </div>
+      
+      <div class="food-item-mini">
+        <img src="images/fries.jpg" alt="Fries" class="food-img-mini">
+        <div class="food-name-mini">Fries</div>
+      </div>
+      
+      <div class="food-item-mini">
+        <img src="images/momo.jpg" alt="Momo" class="food-img-mini">
+        <div class="food-name-mini">Momo</div>
+      </div>
+      
     </div>
+  </div>
+</div>
   </div>
 </section>
 
@@ -773,7 +815,7 @@ footer {
       <!-- Golgappa -->
       <div class="menu-card reveal" data-category="snacks">
         <div class="menu-card-img">
-          <!-- <img src="images/golgappa.jpg" alt="Golgappa"> -->
+          <img src="images/golgappa.jpg" alt="Golgappa">
           💧
           <span class="menu-tag-badge tag-popular">⭐ Popular</span>
         </div>
@@ -791,7 +833,7 @@ footer {
       <!-- Vada Pav -->
       <div class="menu-card reveal" data-category="snacks">
         <div class="menu-card-img">
-          <!-- <img src="images/vadapav.jpg" alt="Vada Pav"> -->
+          <img src="images/vada-pav.jpg" alt="Vada Pav">
           🥙
           <span class="menu-tag-badge tag-hot">🔥 Hot</span>
         </div>
@@ -809,7 +851,7 @@ footer {
       <!-- Mojito -->
       <div class="menu-card reveal" data-category="drinks">
         <div class="menu-card-img">
-          <!-- <img src="images/mojito.jpg" alt="Mojito"> -->
+          <img src="images/mojito.jpg" alt="Mojito">
           🍹
           <span class="menu-tag-badge tag-new">✨ New</span>
         </div>
@@ -827,7 +869,7 @@ footer {
       <!-- Burger -->
       <div class="menu-card reveal" data-category="meals">
         <div class="menu-card-img">
-          <!-- <img src="images/burger.jpg" alt="Burger"> -->
+          <img src="images/burger.jpg" alt="Burger">
           🍔
           <span class="menu-tag-badge tag-hot">🔥 Best Seller</span>
         </div>
@@ -845,7 +887,7 @@ footer {
       <!-- French Fries -->
       <div class="menu-card reveal" data-category="snacks">
         <div class="menu-card-img">
-          <!-- <img src="images/fries.jpg" alt="French Fries"> -->
+          <img src="images/fries.jpg" alt="French Fries">
           🍟
           <span class="menu-tag-badge tag-veg">🥦 Veg</span>
         </div>
@@ -863,7 +905,7 @@ footer {
       <!-- Momo -->
       <div class="menu-card reveal" data-category="snacks">
         <div class="menu-card-img">
-          <!-- <img src="images/momo.jpg" alt="Momo"> -->
+          <img src="images/momo.jpg" alt="Momo">
           🥟
           <span class="menu-tag-badge tag-popular">⭐ Trending</span>
         </div>
@@ -888,8 +930,8 @@ footer {
     <div class="about-grid">
       <div class="about-img-wrap reveal">
         <div class="about-img">
-          <!-- <img src="images/about-cafe.jpg" alt="Pranaav Cafe"> -->
-          <span class="about-img-emoji">🏪</span>
+          <img src="images/about-cafe.jpg" alt="Pranaav Cafe">
+          <!-- <span class="about-img-emoji">🏪</span> -->
         </div>
         <div class="about-float-badge">
           ⭐4.9
@@ -986,9 +1028,9 @@ footer {
         2. Search for "Pranaav Cafe" (once listed)
         3. Click "Get more reviews"
         4. Copy the short URL and replace the href below
-        Currently using a search-based link as placeholder.
+        Currently using a search-based link as placeholder. https://g.page/r/CWlPbrQERcrVEBM/review
       -->
-      <a href="https://search.google.com/local/writereview?placeid=YOUR_PLACE_ID_HERE" 
+      <a href="https://g.page/r/CWlPbrQERcrVEBM/review" 
          target="_blank" class="google-review-btn" id="googleReviewBtn">
         <!-- Google G logo SVG -->
         <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -1023,7 +1065,7 @@ footer {
             <div>
               <h4>Location</h4>
               <!-- Update your address below -->
-              <p>Your Kiosk Address, City, State</p>
+              <p>Kovaipudur, Coimbatore</p>
             </div>
           </div>
           <div class="contact-item">
@@ -1051,7 +1093,7 @@ footer {
         </div>
       </div>
 
-      <div class="form-card reveal">
+      <!-- <div class="form-card reveal">
         <div id="formContent">
           <div class="form-title">Share Your Experience 💬</div>
           <form id="feedbackForm" onsubmit="submitFeedback(event)">
@@ -1108,7 +1150,7 @@ footer {
           <h3>Thank You!</h3>
           <p>Your feedback has been recorded. We really appreciate it!</p>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </section>
@@ -1125,12 +1167,12 @@ footer {
         </div>
       </div>
       <p>Your favourite neighbourhood kiosk serving fresh, flavourful street food & fast food with a smile. Come hungry, leave happy!</p>
-      <div class="social-row">
+      <!-- <div class="social-row">
         <a href="#" class="social-icon">📘</a>
         <a href="#" class="social-icon">📸</a>
         <a href="#" class="social-icon">🐦</a>
         <a href="#" class="social-icon">▶️</a>
-      </div>
+      </div> -->
     </div>
     <div class="footer-col">
       <h4>Quick Links</h4>
